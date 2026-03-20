@@ -52,6 +52,11 @@ background:linear-gradient(90deg,#6366f1,#a855f7);
 border-radius:20px;
 transition:width .2s linear;
 }
+    
+@keyframes load{
+0%{width:0}
+100%{width:100%}
+}
 
 .shimmer{
 background:linear-gradient(to right,#818cf8,#c084fc,#818cf8);
@@ -92,21 +97,21 @@ pointer-events:none;
 
 <body class="min-h-screen flex flex-col items-center p-4">
 
-<div id="pre">
-<canvas id="rainLoading"></canvas>
+    <div id="pre">
+    <canvas id="rainLoading"></canvas>
 
-<h1 class="text-3xl font-extrabold tracking-widest mb-6 shimmer">
-KITDEV
-</h1>
+    <h1 class="text-3xl font-extrabold tracking-widest mb-6 shimmer">
+    KITDEV
+    </h1>
 
-<div class="bar">
-<div id="loadBar"></div>
-</div>
+        <div class="bar">
+            <div id="loadBar"></div>
+            </div>
 
-<p class="mt-4 text-xs opacity-60 tracking-widest">
-LOADING SYSTEM...
-</p>
-</div>
+    <p class="mt-4 text-xs opacity-60 tracking-widest">
+        LOADING SYSTEM...
+        </p>
+        </div>
 
 <canvas id="rain"></canvas>
 
@@ -119,23 +124,23 @@ LOADING SYSTEM...
 <nav class="glass rounded-2xl px-3 py-2 flex gap-2 mt-6">
 <button onclick="tab('home')" id="btnHome" class="active px-4 py-2 rounded-xl text-sm font-bold">Trang chủ bypass</button>
 <button onclick="tab('support')" id="btnSupport" class="px-4 py-2 rounded-xl text-sm font-bold">Các link được hỗ trợ</button>
-<a href="https://discord.gg/kitdev" target="_blank" class="px-4 py-2 rounded-xl text-sm font-bold hover:text-indigo-400">Discord Support</a>
+<a href="https://discord.gg/kitdev" target="_blank"
+class="px-4 py-2 rounded-xl text-sm font-bold hover:text-indigo-400">Discord Support</a>
 </nav>
 
 <div id="home" class="mt-10 w-full max-w-2xl">
 <div class="glass rounded-3xl p-10 text-center">
 
-<h1 class="flex items-center justify-center gap-4 text-5xl font-extrabold uppercase">
-<span class="shimmer">KITDEV</span>
+    <h1 class="flex items-center justify-center gap-4 text-5xl font-extrabold uppercase">
 
-<img src="https://i.postimg.cc/g0n6ztrC/IMG-8919.png"
-class="w-14 h-14 object-contain"
-alt="logo">
-</h1>
+    <span class="shimmer">KITDEV</span>
 
-<p class="text-[10px] opacity-60 uppercase tracking-widest mb-8">
-Roblox Client Bypass
-</p>
+    <img src="https://i.postimg.cc/g0n6ztrC/IMG-8919.png"
+    class="w-14 h-14 object-contain animate-logo"
+    alt="logo">
+
+    </h1>
+<p class="text-[10px] opacity-60 uppercase tracking-widest mb-8">Roblox Client Bypass</p>
 
 <input id="url"
 class="w-full p-5 rounded-2xl outline-none font-semibold text-sm"
@@ -151,7 +156,6 @@ placeholder="Dán link cần bypass">
 <span>Kết quả</span>
 <button onclick="copy()">SAO CHÉP</button>
 </div>
-
 <div id="result" class="break-all text-indigo-300 font-semibold"></div>
 </div>
 
@@ -192,36 +196,35 @@ Bypass Support
 </div>
 </div>
 
-<footer class="mt-12 text-[11px] opacity-70 tracking-widest uppercase text-center">
-Kitkat_dev bản quyền
-</footer>
+    <footer class="mt-12 text-[11px] opacity-70 tracking-widest uppercase text-center">
+    Kitkat_dev bản quyền
+    </footer>
 
-</div>
+    </div>
 
-<script>
+    <script>
+    let resultLink="";
 
-let resultLink="";
-let progress=0;
+        let progress = 0;
 
-const loadInterval=setInterval(()=>{
+        const loadInterval = setInterval(() => {
+        progress += Math.random()*4;
 
-progress+=Math.random()*4;
+        if(progress >= 100){
+        progress = 100;
+        clearInterval(loadInterval);
 
-if(progress>=100){
-progress=100;
-clearInterval(loadInterval);
+        setTimeout(()=>{
+        pre.style.opacity="0";
+        pre.style.visibility="hidden";
+        document.body.style.overflow="auto";
+        app.classList.remove("opacity-0");
+        },600);
+        }
 
-setTimeout(()=>{
-pre.style.opacity="0";
-pre.style.visibility="hidden";
-document.body.style.overflow="auto";
-app.classList.remove("opacity-0");
-},600);
-}
+        loadBar.style.width = progress + "%";
 
-loadBar.style.width=progress+"%";
-
-},120);
+        },120);
 
 function tab(t){
 home.classList.toggle("hidden",t!=="home");
@@ -230,107 +233,83 @@ btnHome.classList.toggle("active",t==="home");
 btnSupport.classList.toggle("active",t==="support");
 }
 
-async function bypass(){
+        async function bypass(){
+        let u=url.value.trim();
+        if(!u)return;
 
-let u=url.value.trim();
-if(!u)return;
+        btnText.innerText="ĐANG BYPASS...";
+        spin.classList.remove("hidden");
 
-btnText.innerText="ĐANG BYPASS...";
-spin.classList.remove("hidden");
+        try{
 
-try{
+        const API_URL = "https://key.baconbypass.online/bypass";
 
-let r=await fetch(
-"https://api.izen.lol/v1/bypass?url="+encodeURIComponent(u),
-{
-headers:{
-"x-api-key":"30eb2b74-2ebb-4852-ad0f-17a0e6fa35b7"
-}
-}
-);
+        let params = new URLSearchParams({
+          url: u,
+          apikey: "Bacon-ad592d2732f071fce8d3-0f10f49ad7976cc1b4a2"
+        });
 
-let d=await r.json();
+        let r = await fetch(`${API_URL}?${params.toString()}`);
+        let d = await r.json();
 
-resultLink=d.result||d.data||d.link||JSON.stringify(d);
+        if(d.status === "success"){
+          resultLink = d.result;
+        }else{
+          resultLink = d.message || "BYPASS LỖI";
+        }
 
-result.innerText=resultLink;
+        result.innerText=resultLink;
+        output.classList.remove("hidden");
 
-output.classList.remove("hidden");
+        }catch{
+        result.innerText="BYPASS THẤT BẠI";
+        output.classList.remove("hidden");
+        }
 
-}catch{
-
-result.innerText="BYPASS THẤT BẠI";
-
-output.classList.remove("hidden");
-
-}
-
-btnText.innerText="BẮT ĐẦU BYPASS";
-spin.classList.add("hidden");
-
-}
+        btnText.innerText="BẮT ĐẦU BYPASS";
+        spin.classList.add("hidden");
+        }
 
 function copy(){
 navigator.clipboard.writeText(resultLink);
 }
 
-url.addEventListener("keypress",function(e){
-if(e.key==="Enter") bypass();
-});
-
 const canvas=document.getElementById("rain");
 const ctx=canvas.getContext("2d");
 
 let w,h;
-
 function resize(){
 w=canvas.width=window.innerWidth;
 h=canvas.height=window.innerHeight;
 }
-
 resize();
 window.onresize=resize;
 
 let drops=[];
-
 for(let i=0;i<180;i++){
 drops.push({x:Math.random()*w,y:Math.random()*h,l:Math.random()*20+10,s:Math.random()*4+4});
 }
 
 function draw(){
-
 ctx.clearRect(0,0,w,h);
-
 ctx.strokeStyle="rgba(148,163,255,0.25)";
 ctx.lineWidth=1;
 
 for(let d of drops){
-
 ctx.beginPath();
 ctx.moveTo(d.x,d.y);
 ctx.lineTo(d.x,d.y+d.l);
 ctx.stroke();
-
 d.y+=d.s;
-
-if(d.y>h){
-d.y=-20;
-d.x=Math.random()*w;
+if(d.y>h){d.y=-20;d.x=Math.random()*w;}
 }
-
-}
-
 requestAnimationFrame(draw);
-
 }
-
 draw();
 
 document.addEventListener("click",()=>{
 bgm.play().catch(()=>{});
 },{once:true});
-
 </script>
-
 </body>
 </html>
